@@ -4,6 +4,7 @@ import { connectDB } from './db/connect.js';
 import initDB from './db/init.js';
 import cors from "cors";
 import cookieParser from "cookie-parser";
+import userRoutes from './routes/user.route.js'; // Importing the user routes
 
 // Load environment variables
 dotenv.config();
@@ -28,6 +29,8 @@ initDB();
 app.get('/', (req, res) => {
   res.send('API is running...');
 });
+
+app.use('/api/users', userRoutes);
 
 // Start the server
 app.listen(PORT, () => {
