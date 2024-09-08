@@ -5,7 +5,8 @@ import User from '../models/userModel.js';
 const initDB = async () => {
     try {
         // Add any associations here if needed
-        await sequelize.sync({ alter: true });  // Sync all models at once
+        await sequelize.sync({ alter: false });  // true to sync all models at once
+        // while using nodemon in dev env, run true for 1st start then keep it false
         console.log('All models were synchronized successfully.');
     } catch (error) {
         console.error('Error synchronizing models:', error);
