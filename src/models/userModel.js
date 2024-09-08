@@ -1,6 +1,7 @@
 import { DataTypes } from "sequelize";
 import { sequelize } from "../db/connect.js";
 import { v4 as uuidv4 } from 'uuid';
+import bcrypt from bcryptjs
 
 // Function to generate a custom string ID (UUID)
 const generateUserId = () => {
@@ -55,5 +56,20 @@ const User = sequelize.define('User', {
 }, {
     timestamps: true,  
 });
+
+const salt = 10
+User.beforeCreate(async (user) => {
+    user.password = await bcrypt.hash(user.password, salt)
+})
+
+User.beforeUpdate(async (user) => {
+    if(user.changed('password')){
+        user.password = await bcrypt.hash(user.password, SALT_ROUNDS);
+    }
+})
+
+User.prototype.isPasswordMatched = async function (password) {
+    return await bcrypt.compare(password, this.password)
+}
 
 export default User;
