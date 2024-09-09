@@ -75,12 +75,60 @@ export const getPost = async (req, res) => {
 
         const post = await Post.findByPk(postId)
         if (!post) {
-            return res.status(404).json({ message: "Post not found" });  // Handle post not found
+            return res.status(404).json({ message: "Post not found" }); 
         }
 
         const { ownerId, ...postWithoutOwnerId } = post.toJSON();
 
         return res.status(200).json({ message: "Post fetched successfully", post: postWithoutOwnerId })
+    } catch (error) {
+        return res.status(500).json({ message: "Server error", error: error.message })
+    }
+}
+
+export const likePost = async (req, res) => {
+    try {
+        const postId = req.params.id;
+        const post = await Post.findByPk(postId)
+
+        if (!post) {
+            return res.status(404).json({ message: "Post not found" }); 
+        }
+
+        await post.incrementLikes()
+        return res.status(200).json({ message: "Post liked successfully", likes: post.likes });
+    } catch (error) {
+        return res.status(500).json({ message: "Server error", error: error.message })
+    }
+}
+
+export const disLikePost = async (req, res) => {
+    try {
+        const postId = req.params.id;
+        const post = await Post.findByPk(postId)
+
+        if (!post) {
+            return res.status(404).json({ message: "Post not found" }); 
+        }
+
+        await post.decrementLikes()
+        return res.status(200).json({ message: "Post disliked successfully", likes: post.likes });
+    } catch (error) {
+        return res.status(500).json({ message: "Server error", error: error.message })
+    }
+}
+
+export const getLikesCount = async (req, res) => {
+    try {
+        const postId = req.params.id;
+        const post = await Post.findByPk(postId)
+
+        if (!post) {
+            return res.status(404).json({ message: "Post not found" });  
+        }
+
+        await post.getLikesCount()
+        return res.status(200).json({ message: "Post fetched successfully", likes: post.likes });
     } catch (error) {
         return res.status(500).json({ message: "Server error", error: error.message })
     }
