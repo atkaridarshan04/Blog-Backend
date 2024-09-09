@@ -2,6 +2,7 @@ import { sequelize } from './connect.js';
 import User from '../models/user.model.js';
 import Post from '../models/post.model.js';
 import Like from '../models/like.model.js';
+import Comment from '../models/comment.model.js';
 
 // Function to initialize database models and sync them
 const initDB = async () => {
