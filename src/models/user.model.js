@@ -54,8 +54,13 @@ const User = sequelize.define('User', {
         type: DataTypes.STRING,
         allowNull: true,
     },
+    deletedAt: {
+        type: DataTypes.DATE,
+        allowNull: true,
+    },
 }, {
     timestamps: true,
+    paranoid: true, // Enables soft delete functionality
     hooks: {
         beforeCreate: async (user) => {
             if (user.password) {
