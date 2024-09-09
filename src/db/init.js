@@ -1,6 +1,6 @@
 import { sequelize } from './connect.js';
 import User from '../models/user.model.js';
-import Post from '../models/posts.model.js';
+import Post from '../models/post.model.js';
 
 // Function to initialize database models and sync them
 const initDB = async () => {
