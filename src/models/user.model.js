@@ -56,18 +56,19 @@ const User = sequelize.define('User', {
     },
 }, {
     timestamps: true,
-});
-
-const SALT_ROUNDS = 10
-User.beforeCreate(async (user) => {
-    user.password = await bcrypt.hash(user.password, SALT_ROUNDS)
-})
-
-User.beforeUpdate(async (user) => {
-    if (user.changed('password')) {
-        user.password = await bcrypt.hash(user.password, SALT_ROUNDS);
+    hooks: {
+        beforeCreate: async (user) => {
+            if (user.password) {
+                user.password = await bcrypt.hash(user.password, 10);
+            }
+        },
+        beforeUpdate: async (user) => {
+            if (user.changed('password')) {
+                user.password = await bcrypt.hash(user.password, 10);
+            }
+        }
     }
-})
+});
 
 User.prototype.isPasswordMatched = async function (password) {
     return await bcrypt.compare(password, this.password)
@@ -76,13 +77,13 @@ User.prototype.isPasswordMatched = async function (password) {
 User.prototype.generateAccessToken = function () {
     return jwt.sign(
         {
-            _id: this._id,
+            id: this.id,
             username: this.username,
             email: this.email
         },
         process.env.ACCESS_TOKEN_SECRET,
         {
-            expiresIn: ACCESS_TOKEN_EXPIRY,
+            expiresIn: process.env.ACCESS_TOKEN_EXPIRY,
         }
     )
 }
