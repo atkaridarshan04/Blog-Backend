@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { verifyJwt } from "../middleware/auth.middleware.js";
-import { comment, createPost, deletePost, dislikePost, getAllComments, getAllPosts, getAllPostsByUser, getLikesCount, getPost, likePost, updatePost } from "../controllers/post.controller.js";
+import { comment, createPost, deleteComment, deletePost, dislikePost, getAllComments, getAllPosts, getAllPostsByUser, getLikesCount, getPost, likePost, updateComment, updatePost } from "../controllers/post.controller.js";
 
 const router = Router();
 
@@ -25,5 +25,9 @@ router.get('/all-posts', getAllPosts)
 router.post('/:id/comment', verifyJwt, comment)
 
 router.get('/:id/all-comments', getAllComments)
+
+router.put("/comments/:id/", verifyJwt, updateComment)
+
+router.delete("/comments/:id/", verifyJwt, deleteComment)
 
 export default router;

@@ -35,7 +35,7 @@ export const updatePost = async (req, res) => {
         }
 
         if (ownerId !== post.ownerId) {
-            res.status(401).json({ message: "Unauthorized request" })
+            res.status(401).json({ message: "Unauthorized request: You cannot update this post" })
         }
 
         const { title, content } = req.body
@@ -61,7 +61,7 @@ export const deletePost = async (req, res) => {
         }
 
         if (ownerId !== post.ownerId) {
-            res.status(401).json({ message: "Unauthorized request" })
+            res.status(401).json({ message: "Unauthorized request: You cannot delete this post" })
         }
 
         await post.destroy();
@@ -213,6 +213,48 @@ export const getAllComments = async (req, res) => {
         if (comments.length == 0) return res.status(404).json({ message: "No comments found" });
 
         return res.status(200).json({ message: "Comments fetched successfully!", comments });
+    } catch (error) {
+        return res.status(500).json({ message: "Server error", error: error.message });
+    }
+}
+
+export const updateComment = async (req, res) => {
+    const userId = req.user.id;
+    const commentId = req.params.id;
+
+    try {
+        const comment = await Comment.findByPk(commentId)
+        if (!comment) return res.status(404).json({ message: "Comment not found" });
+
+        if (userId !== comment.userId) return res.status(403).json({ message: "Unauthorized: You cannot update this comment" })
+
+        const { content } = req.body;
+        if (!content) {
+            return res.status(400).json({ message: "Content is required to update the comment" });
+        }
+
+        comment.content = content;
+        await comment.save();
+
+        return res.status(200).json({ message: "Comment updated successfully", comment });
+    } catch (error) {
+        return res.status(500).json({ message: "Server error", error: error.message });
+    }
+}
+
+export const deleteComment = async (req, res) => {
+    const userId = req.user.id;
+    const commentId = req.params.id;
+
+    try {
+        const comment = await Comment.findByPk(commentId)
+        if (!comment) return res.status(404).json({ message: "Comment not found" });
+
+        if (userId !== comment.userId) return res.status(403).json({ message: "Unauthorized: You cannot delete this comment" })
+
+        await comment.destroy();
+
+        return res.status(200).json({ message: "Comment deleted successfully" });
     } catch (error) {
         return res.status(500).json({ message: "Server error", error: error.message });
     }
