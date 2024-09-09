@@ -12,11 +12,11 @@ router.post('/logout', verifyJwt ,logoutUser)
 
 router.post('/refresh-token', refreshAccessToken)
 
-router.post('/change-password', verifyJwt,changePassword)
+router.put('/change-password', verifyJwt,changePassword)
 
 router.get('/get-user', verifyJwt,getCurrentUser)
 
-router.post('/update-details', verifyJwt, updateAccountDetails)
+router.put('/update-details', verifyJwt, updateAccountDetails)
 
 router.delete('/delete', verifyJwt, deleteUser)
 
