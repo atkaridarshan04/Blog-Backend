@@ -1,5 +1,5 @@
 import User from '../models/user.model.js';
-import bcrypt from 'bcryptjs';
+import jwt from 'jsonwebtoken';
 
 const generateAccessAndRefreshToken = async (userId) => {
     try {
@@ -111,3 +111,50 @@ export const logoutUser = async (req, res) => {
         return res.status(500).json({ message: 'Server error', error: error.message });
     }
 };
+
+const refreshAccessToken = async (req, res) => {
+    const incomingRefreshToken = req.cookies.refreshToken || req.body.refreshToken;
+
+    if (!incomingRefreshToken) {
+        return res.status(401).json({ message: 'Unauthorized request' });
+    }
+
+    try {
+        // Verify the refresh token
+        const decoded = jwt.verify(incomingRefreshToken, process.env.REFRESH_TOKEN_SECRET);
+        const user = await User.findByPk(decoded.id); // Use findByPk for Sequelize
+
+        if (!user) {
+            return res.status(404).json({ message: 'Invalid refresh token' });
+        }
+
+        // Check if the refresh token matches
+        if (user.refreshToken !== incomingRefreshToken) {
+            return res.status(401).json({ message: 'Refresh token expired' });
+        }
+
+        // Generate new access and refresh tokens
+        const { accessToken, refreshToken } = await generateAccessAndRefreshToken(user.id);
+
+        const options = {
+            httpOnly: true,
+            secure: true,
+        };
+
+        // Send response with new tokens
+        return res
+            .status(200)
+            .cookie('accessToken', accessToken, options)
+            .cookie('refreshToken', refreshToken, options)
+            .json({
+                status: 200,
+                data: { accessToken, refreshToken },
+                message: 'Access token refreshed successfully'
+            });
+    } catch (error) {
+        return res.status(401).json({ message: error.message || 'Invalid refresh token' });
+    }
+};
+
+export { refreshAccessToken };
+
