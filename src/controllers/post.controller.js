@@ -1,4 +1,5 @@
 import Post from "../models/post.model.js";
+import User from "../models/user.model.js";
 
 export const createPost = async (req, res) => {
     const { title, content } = req.body
@@ -75,7 +76,7 @@ export const getPost = async (req, res) => {
 
         const post = await Post.findByPk(postId)
         if (!post) {
-            return res.status(404).json({ message: "Post not found" }); 
+            return res.status(404).json({ message: "Post not found" });
         }
 
         const { ownerId, ...postWithoutOwnerId } = post.toJSON();
@@ -92,7 +93,7 @@ export const likePost = async (req, res) => {
         const post = await Post.findByPk(postId)
 
         if (!post) {
-            return res.status(404).json({ message: "Post not found" }); 
+            return res.status(404).json({ message: "Post not found" });
         }
 
         await post.incrementLikes()
@@ -108,7 +109,7 @@ export const disLikePost = async (req, res) => {
         const post = await Post.findByPk(postId)
 
         if (!post) {
-            return res.status(404).json({ message: "Post not found" }); 
+            return res.status(404).json({ message: "Post not found" });
         }
 
         await post.decrementLikes()
@@ -124,12 +125,39 @@ export const getLikesCount = async (req, res) => {
         const post = await Post.findByPk(postId)
 
         if (!post) {
-            return res.status(404).json({ message: "Post not found" });  
+            return res.status(404).json({ message: "Post not found" });
         }
 
         await post.getLikesCount()
         return res.status(200).json({ message: "Post fetched successfully", likes: post.likes });
     } catch (error) {
         return res.status(500).json({ message: "Server error", error: error.message })
+    }
+}
+
+export const getAllPostsByUser = async (req, res) => {
+    try {
+        const userId = req.params.id;
+
+        const user = await User.findByPk(userId)
+        if (!user) return res.status(404).json({ message: "User not found" });
+
+        const posts = await Post.findAll({ where: { ownerId: userId } });
+        if (posts.length === 0) return res.status(404).json({ message: "No posts found" });
+
+        return res.status(200).json({ message: "Posts fetched successfully", posts });
+    } catch (error) {
+        return res.status(500).json({ message: "Server error", error: error.message });
+    }
+}
+
+export const getAllPosts = async (req, res) => {
+    try {
+        const posts = await Post.findAll();
+        if (posts.length === 0) return res.status(404).json({ message: "No posts found" });
+
+        return res.status(200).json({ message: "Posts fetched successfully", posts });
+    } catch (error) {
+        return res.status(500).json({ message: "Server error", error: error.message });
     }
 }
