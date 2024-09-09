@@ -182,5 +182,40 @@ export const changePassword = async (req, res) => {
     }
 }
 
+export const getCurrentUser = async (req, res) => {
+    return res.status(200).json({ message: "User fetched successfully", user: req.user })
+}
+
+export const updateAccountDetails = async (req, res) => {
+    const { username, email, bio, profilePic } = req.body;
+
+    try {
+        const user = await User.findByPk(req.user.id);
+
+        if (!user) {
+            return res.status(404).json({ message: "User not found" });
+        }
+
+        // Update only the fields that are provided in the request
+        if (username) user.username = username;
+        if (email) user.email = email;
+        if (bio) user.bio = bio;
+        if (profilePic) user.profilePic = profilePic;
+
+        await user.save({ validateBeforeSave: false });
+
+        // Remove password from the user object
+        const { password, ...userWithoutPassword } = user.toJSON();
+
+        return res.status(200).json({
+            message: "Account details updated successfully",
+            user: userWithoutPassword,
+        });
+    } catch (error) {
+        return res.status(500).json({ message: "Server error", error: error.message });
+    }
+};
+
+
 export { refreshAccessToken };
 
