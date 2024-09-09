@@ -76,12 +76,37 @@ export const loginUser = async (req, res) => {
         const options = {
             httpOnly: true,
             secure: true,
+            sameSite: 'strict'
         };
 
         return res.status(200)
             .cookie("refreshToken", refreshToken, options)
             .cookie("accessToken", accessToken, options)
             .json({ message: "User logged in successfully", user, refreshToken, accessToken });
+    } catch (error) {
+        return res.status(500).json({ message: 'Server error', error: error.message });
+    }
+};
+
+export const logoutUser = async (req, res) => {
+    try {
+        await User.update(
+            { refreshToken: null }, // Remove the refresh token
+            { where: { id: req.user.id } } // Update by user ID
+        );
+
+        const options = {
+            httpOnly: true,
+            secure: true,
+            sameSite: 'strict',
+        };
+
+        // Clear the cookies for accessToken and refreshToken
+        return res
+            .status(200)
+            .clearCookie("accessToken", options)
+            .clearCookie("refreshToken", options)
+            .json({ message: "User logged out successfully" });
     } catch (error) {
         return res.status(500).json({ message: 'Server error', error: error.message });
     }
