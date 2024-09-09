@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { verifyJwt } from "../middleware/auth.middleware.js";
-import { createPost, deletePost, disLikePost, getAllPosts, getAllPostsByUser, getLikesCount, getPost, likePost, updatePost } from "../controllers/post.controller.js";
+import { createPost, deletePost, dislikePost, getAllPosts, getAllPostsByUser, getLikesCount, getPost, likePost, updatePost } from "../controllers/post.controller.js";
 
 const router = Router();
 
@@ -14,7 +14,7 @@ router.get('/get/:id', verifyJwt, getPost)
 
 router.post('/:id/like', verifyJwt, likePost)
 
-router.post('/:id/dislike', verifyJwt, disLikePost)
+router.post('/:id/dislike', verifyJwt, dislikePost)
 
 router.get('/:id/likes', getLikesCount)
 

@@ -1,3 +1,4 @@
+import Like from "../models/like.model.js";
 import Post from "../models/post.model.js";
 import User from "../models/user.model.js";
 
@@ -88,36 +89,55 @@ export const getPost = async (req, res) => {
 }
 
 export const likePost = async (req, res) => {
-    try {
-        const postId = req.params.id;
-        const post = await Post.findByPk(postId)
+    const postId = req.params.id;
+    const userId = req.user.id;
 
+    try {
+        const post = await Post.findByPk(postId);
         if (!post) {
             return res.status(404).json({ message: "Post not found" });
         }
 
+        const existingLike = await Like.findOne({ where: { userId, postId } });
+        if (existingLike) {
+            return res.status(400).json({ message: "You have already liked this post" });
+        }
+
+        await Like.create({ userId, postId });
+
         await post.incrementLikes()
+
         return res.status(200).json({ message: "Post liked successfully", likes: post.likes });
     } catch (error) {
         return res.status(500).json({ message: "Server error", error: error.message })
     }
 }
 
-export const disLikePost = async (req, res) => {
-    try {
-        const postId = req.params.id;
-        const post = await Post.findByPk(postId)
+export const dislikePost = async (req, res) => {
+    const postId = req.params.id;
+    const userId = req.user.id;
 
+    try {
+        const post = await Post.findByPk(postId);
         if (!post) {
             return res.status(404).json({ message: "Post not found" });
         }
 
-        await post.decrementLikes()
+        const existingLike = await Like.findOne({ where: { userId, postId } });
+        if (!existingLike) {
+            return res.status(400).json({ message: "You have not liked this post yet" });
+        }
+
+        await existingLike.destroy();
+
+        await post.decrementLikes();
+
         return res.status(200).json({ message: "Post disliked successfully", likes: post.likes });
     } catch (error) {
-        return res.status(500).json({ message: "Server error", error: error.message })
+        return res.status(500).json({ message: "Server error", error: error.message });
     }
-}
+};
+
 
 export const getLikesCount = async (req, res) => {
     try {
