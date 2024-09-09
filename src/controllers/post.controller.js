@@ -204,3 +204,16 @@ export const comment = async (req, res) => {
         return res.status(500).json({ message: "Server error", error: error.message });
     }
 }
+
+export const getAllComments = async (req, res) => {
+    const postId = req.params.id;
+
+    try {
+        const comments = await Comment.findAll({ where: { postId: postId } })
+        if (comments.length == 0) return res.status(404).json({ message: "No comments found" });
+
+        return res.status(200).json({ message: "Comments fetched successfully!", comments });
+    } catch (error) {
+        return res.status(500).json({ message: "Server error", error: error.message });
+    }
+}
