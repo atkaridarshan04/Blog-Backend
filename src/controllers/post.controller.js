@@ -1,3 +1,4 @@
+import Comment from "../models/comment.model.js";
 import Like from "../models/like.model.js";
 import Post from "../models/post.model.js";
 import User from "../models/user.model.js";
@@ -138,7 +139,6 @@ export const dislikePost = async (req, res) => {
     }
 };
 
-
 export const getLikesCount = async (req, res) => {
     try {
         const postId = req.params.id;
@@ -177,6 +177,29 @@ export const getAllPosts = async (req, res) => {
         if (posts.length === 0) return res.status(404).json({ message: "No posts found" });
 
         return res.status(200).json({ message: "Posts fetched successfully", posts });
+    } catch (error) {
+        return res.status(500).json({ message: "Server error", error: error.message });
+    }
+}
+
+export const comment = async (req, res) => {
+    const userId = req.user.id;
+    const postId = req.params.id;
+
+    try {
+        const post = await Post.findByPk(postId)
+        if (!post) return res.status(404).json({ message: "Post not found" });
+
+        const { content } = req.body
+        if (!content) return res.status(400).json({ message: "Comment content is required" })
+
+        const comment = await Comment.create({
+            content,
+            userId,
+            postId
+        })
+
+        return res.status(201).json({ message: "Comment created successfully!", comment });
     } catch (error) {
         return res.status(500).json({ message: "Server error", error: error.message });
     }
