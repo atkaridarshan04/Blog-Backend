@@ -47,6 +47,10 @@ const User = sequelize.define('User', {
         type: DataTypes.STRING,
         defaultValue: "https://img.freepik.com/premium-vector/man-avatar-profile-picture-vector-illustration_268834-538.jpg",
     },
+    profilePicId: {
+        type: DataTypes.STRING, // Cloudinary public_id for the profile picture
+        allowNull: true
+    },
     bio: {
         type: DataTypes.STRING,
         allowNull: true,

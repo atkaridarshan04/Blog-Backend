@@ -1,6 +1,7 @@
 import Follower from '../models/follower.model.js';
 import User from '../models/user.model.js';
 import jwt from 'jsonwebtoken';
+import cloudinary from 'cloudinary';
 
 const generateAccessAndRefreshToken = async (userId) => {
     try {
@@ -332,12 +333,21 @@ export const getFollowings = async (req, res) => {
 export const updateUserProfilePicture = async (req, res) => {
     try {
         const userId = req.user.id;
-        const profilePic = req.file.path;  // The Cloudinary URL
-
+        const profilePicFile = req.file;  // The uploaded file
         const user = await User.findByPk(userId);
+
         if (!user) return res.status(404).json({ message: 'User not found' });
 
-        user.profilePicture = imageUrl;
+        // Delete old image from Cloudinary if exists
+        if (user.profilePicId) {
+            await cloudinary.v2.uploader.destroy(user.profilePicId);
+        }
+
+        // Upload the new image to Cloudinary
+        const uploadResponse = await cloudinary.v2.uploader.upload(profilePicFile.path);
+
+        user.profilePicture = uploadResponse.secure_url;
+        user.profilePicId = uploadResponse.public_id;
         await user.save();
 
         return res.status(200).json({ message: 'Profile picture updated successfully', user });
@@ -345,7 +355,6 @@ export const updateUserProfilePicture = async (req, res) => {
         return res.status(500).json({ message: 'Server error', error: error.message });
     }
 };
-
 
 export { refreshAccessToken };
 
