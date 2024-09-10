@@ -1,3 +1,4 @@
+import Follower from '../models/follower.model.js';
 import User from '../models/user.model.js';
 import jwt from 'jsonwebtoken';
 
@@ -232,6 +233,66 @@ export const deleteUser = async (req, res) => {
     } catch (error) {
         console.error('Error deleting user:', error);
         res.status(500).json({ message: 'Server error', error: error.message });
+    }
+};
+
+export const followUser = async (req, res) => {
+    const followingId = req.params.id;
+    const followerId = req.user.id;
+
+    try {
+        const followingUser = await User.findByPk(followingId)
+        if (!followingUser) return res.status(404).json({ message: "User not found" })
+
+        const existingFollower = await Follower.findOne({ where: { followerId, followingId } })
+        if (existingFollower) return res.status(400).json({ message: "You are already following this user" });
+
+        await Follower.create({
+            followerId,
+            followingId
+        })
+
+        return res.status(201).json({ message: "User followed successfully" });
+    } catch (error) {
+        console.error('Error deleting user:', error);
+        res.status(500).json({ message: 'Server error', error: error.message });
+    }
+}
+
+export const unfollowUser = async (req, res) => {
+    const followingId = req.params.id;
+    const followerId = req.user.id;
+
+    try {
+        const followingUser = await User.findByPk(followingId);
+        if (!followingUser) return res.status(404).json({ message: "User not found" });
+
+        const existingFollower = await Follower.findOne({ where: { followerId, followingId } });
+        if (!existingFollower) return res.status(400).json({ message: "You do not follow this user" });
+
+        await existingFollower.destroy();
+
+        return res.status(200).json({ message: "User unfollowed successfully" });
+    } catch (error) {
+        console.error('Error unfollowing user:', error);
+        return res.status(500).json({ message: 'Server error', error: error.message });
+    }
+};
+
+export const getFollowerCount = async (req, res) => {
+    const userId = req.params.id;
+
+    try {
+        const user = await User.findByPk(userId);
+        if (!user) {
+            return res.status(404).json({ message: "User not found" });
+        }
+
+        const followerCount = await Follower.count({ where: { followingId: userId } });
+
+        return res.status(200).json({ message: "Follower count fetched successfully", followerCount });
+    } catch (error) {
+        return res.status(500).json({ message: 'Server error', error: error.message });
     }
 };
 
