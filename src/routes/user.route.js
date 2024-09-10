@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { changePassword, deleteUser, followUser, getCurrentUser, getFollowerCount, loginUser, logoutUser, refreshAccessToken, registerUser, unfollowUser, updateAccountDetails } from '../controllers/user.controller.js';
+import { changePassword, deleteUser, followUser, getCurrentUser, getFollower, getFollowerCount, getFollowings, loginUser, logoutUser, refreshAccessToken, registerUser, unfollowUser, updateAccountDetails } from '../controllers/user.controller.js';
 import { verifyJwt } from '../middleware/auth.middleware.js';
 
 const router = Router();
@@ -25,5 +25,9 @@ router.post("/:id/follow", verifyJwt, followUser)
 router.delete("/:id/unfollow", verifyJwt, unfollowUser)
 
 router.get('/:id/total-followers', getFollowerCount)
+
+router.get('/:id/followers', getFollower)
+
+router.get('/:id/followings', getFollowings)
 
 export default router;

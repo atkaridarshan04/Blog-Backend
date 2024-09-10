@@ -296,5 +296,38 @@ export const getFollowerCount = async (req, res) => {
     }
 };
 
+export const getFollower = async (req, res) => {
+    const userId = req.params.id;
+
+    try {
+        const user = await User.findByPk(userId)
+        if (!user) return res.status(404).json({ message: "User not found" })
+
+        const followers = await Follower.findAll({ where: { followingId: userId } })
+        if (followers.length === 0) return res.status(404).json({ message: "User does not have any follower" })
+
+        return res.status(200).json({ message: "Followers fetched successfully", followers });
+    } catch (error) {
+        return res.status(500).json({ message: 'Server error', error: error.message });
+    }
+}
+
+export const getFollowings = async (req, res) => {
+    const userId = req.params.id;
+
+    try {
+        const user = await User.findByPk(userId);
+        if (!user) return res.status(404).json({ message: "User not found" });
+
+        const followings = await Follower.findAll({ where: { followerId: userId } });
+        if (followings.length === 0) return res.status(404).json({ message: "User is not following anyone" });
+
+        return res.status(200).json({ message: "Following users fetched successfully", followings });
+    } catch (error) {
+        return res.status(500).json({ message: 'Server error', error: error.message });
+    }
+};
+
+
 export { refreshAccessToken };
 
