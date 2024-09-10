@@ -3,6 +3,7 @@ import { sequelize } from "../db/connect.js";
 import { v4 as uuidv4 } from 'uuid';
 import bcrypt from "bcryptjs"
 import jwt from "jsonwebtoken"
+import Follower from "./follower.model.js";
 
 // Function to generate a custom string ID (UUID)
 const generateUserId = () => {
@@ -74,6 +75,20 @@ const User = sequelize.define('User', {
         }
     }
 });
+
+// Associations
+User.belongsToMany(User, {
+    through: Follower,
+    as: 'followers',
+    foreignKey: 'followingId'
+});
+
+User.belongsToMany(User, {
+    through: Follower,
+    as: 'following',
+    foreignKey: 'followerId'
+});
+
 
 User.prototype.isPasswordMatched = async function (password) {
     return await bcrypt.compare(password, this.password)
