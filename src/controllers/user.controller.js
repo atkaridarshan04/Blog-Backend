@@ -25,7 +25,8 @@ const generateAccessAndRefreshToken = async (userId) => {
 
 
 export const registerUser = async (req, res) => {
-    const { username, email, password, bio, profilePic } = req.body;
+    const { username, email, password, bio } = req.body;
+    const profilePic = req.file.path;  // The Cloudinary URL
 
     if (!username || !email || !password) {
         return res.status(400).json({ message: 'Username, email, and password are required' });
@@ -323,6 +324,23 @@ export const getFollowings = async (req, res) => {
         if (followings.length === 0) return res.status(404).json({ message: "User is not following anyone" });
 
         return res.status(200).json({ message: "Following users fetched successfully", followings });
+    } catch (error) {
+        return res.status(500).json({ message: 'Server error', error: error.message });
+    }
+};
+
+export const updateUserProfilePicture = async (req, res) => {
+    try {
+        const userId = req.user.id;
+        const profilePic = req.file.path;  // The Cloudinary URL
+
+        const user = await User.findByPk(userId);
+        if (!user) return res.status(404).json({ message: 'User not found' });
+
+        user.profilePicture = imageUrl;
+        await user.save();
+
+        return res.status(200).json({ message: 'Profile picture updated successfully', user });
     } catch (error) {
         return res.status(500).json({ message: 'Server error', error: error.message });
     }
