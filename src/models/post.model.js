@@ -4,7 +4,7 @@ import { v4 as uuidv4 } from 'uuid';
 import User from "./user.model.js";
 
 const generatePostId = () => {
-    return `post_${uuidv4()}`; 
+    return `post_${uuidv4()}`;
 };
 const Post = sequelize.define('Post', {
     id: {
@@ -21,6 +21,10 @@ const Post = sequelize.define('Post', {
         type: DataTypes.TEXT,
         allowNull: false
     },
+    imageUrl: {
+        type: DataTypes.STRING,
+        allowNull: true,
+    },
     views: {
         type: DataTypes.INTEGER,
         defaultValue: 0
@@ -33,10 +37,10 @@ const Post = sequelize.define('Post', {
         type: DataTypes.STRING,
         allowNull: false,
         references: {
-            model: 'Users', 
+            model: 'Users',
             key: 'id'
         }
-    }
+    },
 }, {
     timestamps: true,
 });

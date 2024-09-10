@@ -1,10 +1,11 @@
 import { Router } from "express";
 import { verifyJwt } from "../middleware/auth.middleware.js";
 import { comment, createPost, deleteComment, deletePost, dislikePost, getAllComments, getAllPosts, getAllPostsByUser, getLikesCount, getPost, likePost, updateComment, updatePost } from "../controllers/post.controller.js";
+import upload from "../config/multer.config.js";
 
 const router = Router();
 
-router.post('/create', verifyJwt, createPost)
+router.post('/create', verifyJwt, upload.single('image'), createPost)
 
 router.put('/update/:id', verifyJwt, updatePost)
 

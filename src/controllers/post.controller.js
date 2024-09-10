@@ -6,15 +6,17 @@ import User from "../models/user.model.js";
 export const createPost = async (req, res) => {
     const { title, content } = req.body
     const ownerId = req.user.id
+    const imageUrl = req.file.path;  // Cloudinary URL for the post image
 
     try {
         if (!title || !content) {
-            return res.status(400).json({ message: "Please provide title and content of post" })
+            return res.status(400).json({ message: "Title and content are required" })
         }
 
         const post = await Post.create({
             title,
             content,
+            imageUrl,
             ownerId
         })
 
