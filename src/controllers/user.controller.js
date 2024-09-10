@@ -27,7 +27,7 @@ const generateAccessAndRefreshToken = async (userId) => {
 
 export const registerUser = async (req, res) => {
     const { username, email, password, bio } = req.body;
-    const profilePic = req.file.path;  // The Cloudinary URL
+    const profilePic = req.file ? req.file.path : null  // The Cloudinary URL
 
     if (!username || !email || !password) {
         return res.status(400).json({ message: 'Username, email, and password are required' });

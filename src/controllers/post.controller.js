@@ -4,18 +4,19 @@ import Post from "../models/post.model.js";
 import User from "../models/user.model.js";
 
 export const createPost = async (req, res) => {
-    const { title, content } = req.body
+    const { title, content, category } = req.body
     const ownerId = req.user.id
-    const imageUrl = req.file.path;  // Cloudinary URL for the post image
+    const imageUrl = req.file ? req.file.path : null;  // Cloudinary URL for the post image
 
     try {
-        if (!title || !content) {
-            return res.status(400).json({ message: "Title and content are required" })
+        if (!title || !content || !category) {
+            return res.status(400).json({ message: "Title, content and category required" })
         }
 
         const post = await Post.create({
             title,
             content,
+            category,
             imageUrl,
             ownerId
         })
@@ -33,16 +34,17 @@ export const updatePost = async (req, res) => {
 
         const post = await Post.findByPk(postId)
         if (!post) {
-            res.status(404).json({ message: "Post not found" })
+            return res.status(404).json({ message: "Post not found" })
         }
 
         if (ownerId !== post.ownerId) {
-            res.status(401).json({ message: "Unauthorized request: You cannot update this post" })
+            return res.status(401).json({ message: "Unauthorized request: You cannot update this post" })
         }
 
-        const { title, content } = req.body
+        const { title, content, category } = req.body
         if (title) post.title = title
         if (content) post.content = content
+        if (category) post.category = category
 
         await post.save();
 
@@ -63,7 +65,7 @@ export const deletePost = async (req, res) => {
         }
 
         if (ownerId !== post.ownerId) {
-            res.status(401).json({ message: "Unauthorized request: You cannot delete this post" })
+            return res.status(401).json({ message: "Unauthorized request: You cannot delete this post" })
         }
 
         await post.destroy();

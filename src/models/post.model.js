@@ -33,6 +33,10 @@ const Post = sequelize.define('Post', {
         type: DataTypes.INTEGER,
         defaultValue: 0
     },
+    category:{
+        type: DataTypes.STRING,
+        allowNull: false,
+    },
     ownerId: {
         type: DataTypes.STRING,
         allowNull: false,
