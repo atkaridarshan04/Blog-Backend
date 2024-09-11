@@ -356,5 +356,19 @@ export const updateUserProfilePicture = async (req, res) => {
     }
 };
 
+export const getUserByUsername = async (req, res) => {
+    const username = req.params.username;
+    try {
+        const user = await User.findOne({
+            where: { username }
+        })
+        if (!user) return res.status(404).json({ message: "No user found with this username" });
+
+        return res.status(200).json({ message: "User fetched successfully", user });
+    } catch (error) {   
+        return res.status(500).json({ message: 'Server error', error: error.message });
+    }
+}
+
 export { refreshAccessToken };
 

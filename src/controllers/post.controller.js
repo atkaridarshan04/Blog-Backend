@@ -353,3 +353,46 @@ export const deletePostTags = async (req, res) => {
     }
 };
 
+export const getPostByTag = async (req, res) => {
+    const tagName = req.params.tag;
+    try {
+        const tag = await Tag.findOne({ where: { name: tagName } });
+        if (!tag) return res.status(404).json({ message: "Tag not found" });
+
+        const posts = await Post.findAll({
+            include: {
+                model: Tag,
+                as: 'tags',
+                attributes: []  // No need to include tag attributes
+            },
+            where: {
+                '$tags.name$': tagName
+            }
+        });
+
+        if (posts.length === 0) return res.status(404).json({ message: "No posts found with this tag" });
+
+        return res.status(200).json({ message: "Posts fetched successfully", posts });
+    } catch (error) {
+        return res.status(500).json({ message: "Server error", error: error.message });
+    }
+}
+
+export const getPostsByCategory = async (req, res) => {
+    const category = req.params.category;
+    try {
+        const posts = await Post.findAll({
+            where: {
+                category
+            }
+        });
+
+        if (posts.length === 0) {
+            return res.status(404).json({ message: "No posts found in this category" });
+        }
+
+        return res.status(200).json({ message: "Posts fetched successfully", posts });
+    } catch (error) {
+        return res.status(500).json({ message: "Server error", error: error.message });
+    }
+}

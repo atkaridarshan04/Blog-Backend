@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { verifyJwt } from "../middleware/auth.middleware.js";
-import { comment, createPost, deleteComment, deletePost, deletePostTags, dislikePost, getAllComments, getAllPosts, getAllPostsByUser, getLikesCount, getPost, likePost, updateComment, updatePost, updatePostTags } from "../controllers/post.controller.js";
+import { comment, createPost, deleteComment, deletePost, deletePostTags, dislikePost, getAllComments, getAllPosts, getAllPostsByUser, getLikesCount, getPost, getPostByTag, getPostsByCategory, likePost, updateComment, updatePost, updatePostTags } from "../controllers/post.controller.js";
 import upload from "../config/multer.config.js";
 
 const router = Router();
@@ -34,5 +34,9 @@ router.delete("/comments/:id/", verifyJwt, deleteComment)
 router.put('/:id/update-tags', updatePostTags)
 
 router.delete('/:id/delete-tags', deletePostTags)
+
+router.get('/tags/:tag', verifyJwt, getPostByTag)
+
+router.get('/category/:category', verifyJwt, getPostsByCategory)
 
 export default router;
