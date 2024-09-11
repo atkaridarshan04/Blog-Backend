@@ -1,0 +1,899 @@
+{
+	"info": {
+		"_postman_id": "b88ccf62-2206-4d20-aa0d-d28026f2df9f",
+		"name": "Blog-Backend",
+		"description": "This collection contains all the API endpoints for the blog platform, including user management, post creation and interactions, comment handling, follower relationships, and tag management. Each folder represents a key functional area of the backend system.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "38192013"
+	},
+	"item": [
+		{
+			"name": "Users",
+			"item": [
+				{
+					"name": "Register user",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "username",
+									"value": "test",
+									"type": "text"
+								},
+								{
+									"key": "email",
+									"value": "test@gmail.com",
+									"type": "text"
+								},
+								{
+									"key": "password",
+									"value": "test1234",
+									"type": "text"
+								},
+								{
+									"key": "image",
+									"type": "file",
+									"src": "/C:/Users/atkar/OneDrive/Pictures/YT_Logo_Banner.jpeg"
+								},
+								{
+									"key": "bio",
+									"value": "I am test user",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{server_url}}/users/register",
+							"host": [
+								"{{server_url}}"
+							],
+							"path": [
+								"users",
+								"register"
+							]
+						},
+						"description": "_Allows a new user to register by providing a username, email, password, profile image, and bio._"
+					},
+					"response": []
+				},
+				{
+					"name": "Login user",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"email\": \"test@gmail.com\",\r\n    \"password\": \"test1234\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{server_url}}/users/login",
+							"host": [
+								"{{server_url}}"
+							],
+							"path": [
+								"users",
+								"login"
+							]
+						},
+						"description": "_Authenticates the user by validating their email and password, returning access and refresh tokens._"
+					},
+					"response": []
+				},
+				{
+					"name": "Logout user",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{server_url}}/users/logout",
+							"host": [
+								"{{server_url}}"
+							],
+							"path": [
+								"users",
+								"logout"
+							]
+						},
+						"description": "_Logs out the user by invalidating the refresh token._"
+					},
+					"response": []
+				},
+				{
+					"name": "Refresh Access Token",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{server_url}}/users/refresh-token",
+							"host": [
+								"{{server_url}}"
+							],
+							"path": [
+								"users",
+								"refresh-token"
+							]
+						},
+						"description": "_Generates a new access token using the refresh token._"
+					},
+					"response": []
+				},
+				{
+					"name": "Change Password",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"currentPassword\":\"test1234\",\r\n    \"newPassword\":\"test12345,\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{server_url}}/users/change-password",
+							"host": [
+								"{{server_url}}"
+							],
+							"path": [
+								"users",
+								"change-password"
+							]
+						},
+						"description": "_Allows the user to change their password by providing the current password and a new password._"
+					},
+					"response": []
+				},
+				{
+					"name": "Update Account Details",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"username\":\"test_\",\r\n    \"email\":\"test_@gmail.com\",\r\n    \"bio\":\"update details of test\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{server_url}}/users/update-details",
+							"host": [
+								"{{server_url}}"
+							],
+							"path": [
+								"users",
+								"update-details"
+							]
+						},
+						"description": "_Allows the user to update their account details such as username, email, and bio._"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Current User",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{server_url}}/users/get-user",
+							"host": [
+								"{{server_url}}"
+							],
+							"path": [
+								"users",
+								"get-user"
+							]
+						},
+						"description": "_Retrieves the current authenticated user’s information._"
+					},
+					"response": []
+				},
+				{
+					"name": "Delete user",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{server_url}}/users/delete",
+							"host": [
+								"{{server_url}}"
+							],
+							"path": [
+								"users",
+								"delete"
+							]
+						},
+						"description": "_Deletes the user account permanently from the system._"
+					},
+					"response": []
+				},
+				{
+					"name": "Update Profile Pic",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "image",
+									"type": "file",
+									"src": "/C:/Users/atkar/OneDrive/Pictures/Gaming_Logo.jpg"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{server_url}}/users/profile/upload",
+							"host": [
+								"{{server_url}}"
+							],
+							"path": [
+								"users",
+								"profile",
+								"upload"
+							]
+						},
+						"description": "_Allows the user to upload or update their profile picture._"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Users By Username",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{server_url}}/users/test",
+							"host": [
+								"{{server_url}}"
+							],
+							"path": [
+								"users",
+								"test"
+							]
+						},
+						"description": "_Fetches users based on a provided username._"
+					},
+					"response": []
+				}
+			],
+			"description": "Endpoints related to user management, including registration, login, profile updates, password changes, and deletion."
+		},
+		{
+			"name": "Posts",
+			"item": [
+				{
+					"name": "Create Post",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "title",
+									"value": "New Post",
+									"type": "text"
+								},
+								{
+									"key": "content",
+									"value": "Hello from test post with cloudinary",
+									"type": "text"
+								},
+								{
+									"key": "category",
+									"value": "Test",
+									"type": "text"
+								},
+								{
+									"key": "imageUrl",
+									"type": "file",
+									"src": "/C:/Users/atkar/OneDrive/Pictures/Gaming_Logo.jpg"
+								},
+								{
+									"key": "tags",
+									"value": "test, first-post",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{server_url}}/posts/create",
+							"host": [
+								"{{server_url}}"
+							],
+							"path": [
+								"posts",
+								"create"
+							]
+						},
+						"description": "_Allows a user to create a new post with a title, content, category, image, and tags._"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Post",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{server_url}}/posts/get/post_566f35d4-ac5b-4cc5-969b-b9cdea3b881c",
+							"host": [
+								"{{server_url}}"
+							],
+							"path": [
+								"posts",
+								"get",
+								"post_566f35d4-ac5b-4cc5-969b-b9cdea3b881c"
+							]
+						},
+						"description": "_Retrieves details of a specific post by its ID._"
+					},
+					"response": []
+				},
+				{
+					"name": "Update Post",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"title\": \"Test Post Updated\",\r\n    \"content\": \"Content of test post os being updated\"\r\n}   ",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{server_url}}/posts/update/post_566f35d4-ac5b-4cc5-969b-b9cdea3b881c",
+							"host": [
+								"{{server_url}}"
+							],
+							"path": [
+								"posts",
+								"update",
+								"post_566f35d4-ac5b-4cc5-969b-b9cdea3b881c"
+							]
+						},
+						"description": "_Allows a user to update an existing post’s title, content, or other details._"
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Post",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{server_url}}/posts/delete/post_05c95e4e-ada3-46d8-a393-ecd71b06e156",
+							"host": [
+								"{{server_url}}"
+							],
+							"path": [
+								"posts",
+								"delete",
+								"post_05c95e4e-ada3-46d8-a393-ecd71b06e156"
+							]
+						},
+						"description": "_Deletes a specified post from the system._"
+					},
+					"response": []
+				},
+				{
+					"name": "Get All Posts By User",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{server_url}}/posts/user_b80c72aa-9d99-41c6-984f-40869e230928/posts",
+							"host": [
+								"{{server_url}}"
+							],
+							"path": [
+								"posts",
+								"user_b80c72aa-9d99-41c6-984f-40869e230928",
+								"posts"
+							]
+						},
+						"description": "_Fetches all posts created by a specific user._"
+					},
+					"response": []
+				},
+				{
+					"name": "Get All Posts",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{server_url}}/posts/all-posts",
+							"host": [
+								"{{server_url}}"
+							],
+							"path": [
+								"posts",
+								"all-posts"
+							]
+						},
+						"description": "_Fetches all posts in the system._"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Posts By Category",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{server_url}}/posts/category/test",
+							"host": [
+								"{{server_url}}"
+							],
+							"path": [
+								"posts",
+								"category",
+								"test"
+							]
+						},
+						"description": "_Fetches all posts that belong to a specific category._"
+					},
+					"response": []
+				}
+			],
+			"description": "Endpoints for creating, updating, retrieving, and deleting blog posts, as well as managing post categories, tags, and interactions like likes."
+		},
+		{
+			"name": "Likes",
+			"item": [
+				{
+					"name": "Get Likes Count",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{server_url}}/posts/post_566f35d4-ac5b-4cc5-969b-b9cdea3b881c/likes",
+							"host": [
+								"{{server_url}}"
+							],
+							"path": [
+								"posts",
+								"post_566f35d4-ac5b-4cc5-969b-b9cdea3b881c",
+								"likes"
+							]
+						},
+						"description": "_Retrieves the total number of likes for a specific post._"
+					},
+					"response": []
+				},
+				{
+					"name": "Like Post",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{server_url}}/posts/post_566f35d4-ac5b-4cc5-969b-b9cdea3b881c/like",
+							"host": [
+								"{{server_url}}"
+							],
+							"path": [
+								"posts",
+								"post_566f35d4-ac5b-4cc5-969b-b9cdea3b881c",
+								"like"
+							]
+						},
+						"description": "_Allows a user to like a specific post._"
+					},
+					"response": []
+				},
+				{
+					"name": "Dislike Post",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{server_url}}/posts/post_566f35d4-ac5b-4cc5-969b-b9cdea3b881c/dislike",
+							"host": [
+								"{{server_url}}"
+							],
+							"path": [
+								"posts",
+								"post_566f35d4-ac5b-4cc5-969b-b9cdea3b881c",
+								"dislike"
+							]
+						},
+						"description": " _Allows a user to dislike or remove their like from a post._"
+					},
+					"response": []
+				}
+			],
+			"description": "Endpoints for managing post likes, including liking, disliking, and retrieving the like count for specific posts."
+		},
+		{
+			"name": "Comments",
+			"item": [
+				{
+					"name": "Comment",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"content\": \"This is a test comment\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{server_url}}/posts/post_566f35d4-ac5b-4cc5-969b-b9cdea3b881c/comment",
+							"host": [
+								"{{server_url}}"
+							],
+							"path": [
+								"posts",
+								"post_566f35d4-ac5b-4cc5-969b-b9cdea3b881c",
+								"comment"
+							]
+						},
+						"description": " _Allows a user to comment on a specific post._"
+					},
+					"response": []
+				},
+				{
+					"name": "Get All Comments",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{server_url}}/posts/post_566f35d4-ac5b-4cc5-969b-b9cdea3b881c/all-comments",
+							"host": [
+								"{{server_url}}"
+							],
+							"path": [
+								"posts",
+								"post_566f35d4-ac5b-4cc5-969b-b9cdea3b881c",
+								"all-comments"
+							]
+						},
+						"description": "_Fetches all comments on a specific post._"
+					},
+					"response": []
+				},
+				{
+					"name": "Update Comment",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"content\":\"This comment is updated when testing update comment endpoint\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{server_url}}/posts/comments/comment_bf98c596-59da-41ee-9f62-f043a6c0d9cf",
+							"host": [
+								"{{server_url}}"
+							],
+							"path": [
+								"posts",
+								"comments",
+								"comment_bf98c596-59da-41ee-9f62-f043a6c0d9cf"
+							]
+						},
+						"description": "_Allows a user to update their own comment on a post._"
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Comment",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{server_url}}/posts/comments/comment_bf98c596-59da-41ee-9f62-f043a6c0d9cf",
+							"host": [
+								"{{server_url}}"
+							],
+							"path": [
+								"posts",
+								"comments",
+								"comment_bf98c596-59da-41ee-9f62-f043a6c0d9cf"
+							]
+						},
+						"description": " _Deletes a comment from a post._"
+					},
+					"response": []
+				}
+			],
+			"description": "Endpoints for managing comments on blog posts, including adding, updating, retrieving, and deleting comments."
+		},
+		{
+			"name": "Tags",
+			"item": [
+				{
+					"name": "Get Posts with Tags",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{server_url}}/posts/tags/test",
+							"host": [
+								"{{server_url}}"
+							],
+							"path": [
+								"posts",
+								"tags",
+								"test"
+							]
+						},
+						"description": "_Fetches all posts associated with a specific tag._"
+					},
+					"response": []
+				},
+				{
+					"name": "Update Tag",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"tags\": \"test-tag-updated\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{server_url}}/posts/post_566f35d4-ac5b-4cc5-969b-b9cdea3b881c/update-tags",
+							"host": [
+								"{{server_url}}"
+							],
+							"path": [
+								"posts",
+								"post_566f35d4-ac5b-4cc5-969b-b9cdea3b881c",
+								"update-tags"
+							]
+						},
+						"description": "_Allows an admin to update the tags associated with a post._"
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Tag",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"tags\": \"test-tag-updated, first-post\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{server_url}}/posts/post_566f35d4-ac5b-4cc5-969b-b9cdea3b881c/delete-tags",
+							"host": [
+								"{{server_url}}"
+							],
+							"path": [
+								"posts",
+								"post_566f35d4-ac5b-4cc5-969b-b9cdea3b881c",
+								"delete-tags"
+							]
+						},
+						"description": "_Allows an admin to remove specific tags from a post._"
+					},
+					"response": []
+				}
+			],
+			"description": "Endpoints for managing tags associated with posts, including adding, updating, deleting tags, and retrieving posts by specific tags."
+		},
+		{
+			"name": "Followers",
+			"item": [
+				{
+					"name": "Follow User",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{server_url}}/users/user_b80c72aa-9d99-41c6-984f-40869e230928/follow",
+							"host": [
+								"{{server_url}}"
+							],
+							"path": [
+								"users",
+								"user_b80c72aa-9d99-41c6-984f-40869e230928",
+								"follow"
+							]
+						},
+						"description": "_Allows a user to follow another user._"
+					},
+					"response": []
+				},
+				{
+					"name": "Unfollow User",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{server_url}}/users/user_b80c72aa-9d99-41c6-984f-40869e230928/unfollow",
+							"host": [
+								"{{server_url}}"
+							],
+							"path": [
+								"users",
+								"user_b80c72aa-9d99-41c6-984f-40869e230928",
+								"unfollow"
+							]
+						},
+						"description": "_Allows a user to unfollow a user they had previously followed._"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Followers Count",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{server_url}}/users/user_b80c72aa-9d99-41c6-984f-40869e230928/total-followers",
+							"host": [
+								"{{server_url}}"
+							],
+							"path": [
+								"users",
+								"user_b80c72aa-9d99-41c6-984f-40869e230928",
+								"total-followers"
+							]
+						},
+						"description": "_Retrieves the total number of followers for a user._"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Followers",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{server_url}}/users/user_b80c72aa-9d99-41c6-984f-40869e230928/followers",
+							"host": [
+								"{{server_url}}"
+							],
+							"path": [
+								"users",
+								"user_b80c72aa-9d99-41c6-984f-40869e230928",
+								"followers"
+							]
+						},
+						"description": "_Retrieves a list of all users following the specified user._"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Followings",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{server_url}}/users/user_b80c72aa-9d99-41c6-984f-40869e230928/followings",
+							"host": [
+								"{{server_url}}"
+							],
+							"path": [
+								"users",
+								"user_b80c72aa-9d99-41c6-984f-40869e230928",
+								"followings"
+							]
+						},
+						"description": "_Retrieves a list of all users the specified user is following._"
+					},
+					"response": []
+				}
+			],
+			"description": "This folder contains endpoints for managing followers, including following and unfollowing users, retrieving follower and following counts, and getting lists of followers and followings."
+		},
+		{
+			"name": "Test Connection",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8000/",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						""
+					]
+				},
+				"description": "An endpoint to verify the server's connection status and accessibility."
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "server_url",
+			"value": "http://localhost:8000/api"
+		}
+	]
+}
