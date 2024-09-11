@@ -1,16 +1,17 @@
 import Comment from "../models/comment.model.js";
 import Like from "../models/like.model.js";
 import Post from "../models/post.model.js";
+import Tag from "../models/tag.model.js";
 import User from "../models/user.model.js";
 
 export const createPost = async (req, res) => {
-    const { title, content, category } = req.body
+    const { title, content, category, tags } = req.body
     const ownerId = req.user.id
     const imageUrl = req.file ? req.file.path : null;  // Cloudinary URL for the post image
 
     try {
-        if (!title || !content || !category) {
-            return res.status(400).json({ message: "Title, content and category required" })
+        if (!title || !content || !category || !tags) {
+            return res.status(400).json({ message: "Title, content, category and tags are required" })
         }
 
         const post = await Post.create({
@@ -21,7 +22,20 @@ export const createPost = async (req, res) => {
             ownerId
         })
 
-        return res.status(201).json({ message: "Post created successfully!", post });
+        const tagList = Array.isArray(tags) ? tags : tags.split(',').map(tag => tag.trim());
+
+        const tagInstances = await Promise.all(tagList.map(async tagName => {
+            // Find or create a tag with the given name
+            const [tag] = await Tag.findOrCreate({
+                where: { name: tagName }
+            });
+            return tag;
+        }));
+
+        // Associate tags with the post
+        await post.setTags(tagInstances);
+
+        return res.status(201).json({ message: "Post created successfully!", post, tags: tagInstances });
     } catch (error) {
         return res.status(500).json({ message: 'Server error', error: error.message });
     }
@@ -80,18 +94,27 @@ export const getPost = async (req, res) => {
     try {
         const postId = req.params.id;
 
-        const post = await Post.findByPk(postId)
+        const post = await Post.findByPk(postId, {
+            include: {
+                model: Tag,
+                as: 'tags',
+                attributes: ['name']
+            }
+        });
+
         if (!post) {
             return res.status(404).json({ message: "Post not found" });
         }
 
         const { ownerId, ...postWithoutOwnerId } = post.toJSON();
 
-        return res.status(200).json({ message: "Post fetched successfully", post: postWithoutOwnerId })
+        return res.status(200).json({ message: "Post fetched successfully", post: postWithoutOwnerId });
     } catch (error) {
-        return res.status(500).json({ message: "Server error", error: error.message })
+        return res.status(500).json({ message: "Server error", error: error.message });
     }
 }
+
+
 
 export const likePost = async (req, res) => {
     const postId = req.params.id;
@@ -163,10 +186,18 @@ export const getAllPostsByUser = async (req, res) => {
     try {
         const userId = req.params.id;
 
-        const user = await User.findByPk(userId)
+        const user = await User.findByPk(userId);
         if (!user) return res.status(404).json({ message: "User not found" });
 
-        const posts = await Post.findAll({ where: { ownerId: userId } });
+        const posts = await Post.findAll({
+            where: { ownerId: userId },
+            include: {
+                model: Tag,
+                as: 'tags',
+                attributes: ['name']
+            }
+        });
+
         if (posts.length === 0) return res.status(404).json({ message: "No posts found" });
 
         return res.status(200).json({ message: "Posts fetched successfully", posts });
@@ -175,9 +206,16 @@ export const getAllPostsByUser = async (req, res) => {
     }
 }
 
+
 export const getAllPosts = async (req, res) => {
     try {
-        const posts = await Post.findAll();
+        const posts = await Post.findAll({
+            include: {
+                model: Tag,
+                as: 'tags',
+                attributes: ['name']
+            }
+        });
         if (posts.length === 0) return res.status(404).json({ message: "No posts found" });
 
         return res.status(200).json({ message: "Posts fetched successfully", posts });

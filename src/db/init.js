@@ -3,7 +3,8 @@ import User from '../models/user.model.js';
 import Post from '../models/post.model.js';
 import Like from '../models/like.model.js';
 import Comment from '../models/comment.model.js';
-import Follower from '../models/follower.model.js'; // Import Follower model
+import Follower from '../models/follower.model.js';
+import Tag from '../models/tag.model.js';   
 
 // Function to initialize database models and sync them
 const initDB = async () => {

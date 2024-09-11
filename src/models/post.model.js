@@ -2,6 +2,7 @@ import { DataTypes } from "sequelize";
 import { sequelize } from "../db/connect.js";
 import { v4 as uuidv4 } from 'uuid';
 import User from "./user.model.js";
+import Tag from "./tag.model.js";
 
 const generatePostId = () => {
     return `post_${uuidv4()}`;
@@ -51,6 +52,7 @@ const Post = sequelize.define('Post', {
 
 // Define associations
 Post.belongsTo(User, { foreignKey: 'ownerId', as: 'owner' });
+Post.belongsToMany(Tag, { through: 'PostTags', as: 'tags' });
 
 // Increment likes
 Post.prototype.incrementLikes = async function () {
