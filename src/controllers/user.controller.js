@@ -331,23 +331,36 @@ export const getFollowings = async (req, res) => {
 };
 
 export const updateUserProfilePicture = async (req, res) => {
+    const userId = req.user.id;
+    
+    if (!userId) {
+        return res.status(400).json({ message: 'User ID is required' });
+    }
+
     try {
-        const userId = req.user.id;
-        const profilePicFile = req.file;  // The uploaded file
+        // Fetch the user by ID
         const user = await User.findByPk(userId);
 
-        if (!user) return res.status(404).json({ message: 'User not found' });
-
-        // Delete old image from Cloudinary if exists
-        if (user.profilePicId) {
-            await cloudinary.v2.uploader.destroy(user.profilePicId);
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
         }
 
-        // Upload the new image to Cloudinary
-        const uploadResponse = await cloudinary.v2.uploader.upload(profilePicFile.path);
+        if (req.file) {
+            // Delete the old image from Cloudinary if it exists
+            if (user.profilePicId) {
+                await cloudinary.v2.uploader.destroy(user.profilePicId);
+            }
 
-        user.profilePicture = uploadResponse.secure_url;
-        user.profilePicId = uploadResponse.public_id;
+            // Upload the new image to Cloudinary
+            const uploadResponse = await cloudinary.v2.uploader.upload(req.file.path);
+
+            // Update the user profile with the new image URL and public ID
+            user.profilePicture = uploadResponse.secure_url;
+            user.profilePicId = uploadResponse.public_id;
+        } else {
+            return res.status(400).json({ message: 'No file uploaded' });
+        }
+
         await user.save();
 
         return res.status(200).json({ message: 'Profile picture updated successfully', user });
