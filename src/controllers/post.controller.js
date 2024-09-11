@@ -301,3 +301,55 @@ export const deleteComment = async (req, res) => {
         return res.status(500).json({ message: "Server error", error: error.message });
     }
 }
+
+export const updatePostTags = async (req, res) => {
+    try {
+        const postId = req.params.id;
+        const { tags } = req.body;
+
+        const tagList = Array.isArray(tags) ? tags : tags.split(',').map(tag => tag.trim());
+
+        const post = await Post.findByPk(postId, { include: 'tags' });
+        if (!post) return res.status(404).json({ message: "Post not found" });
+
+        // Find or create tag instances
+        const tagInstances = await Promise.all(tagList.map(async (tagName) => {
+            let tag = await Tag.findOne({ where: { name: tagName } });
+            if (!tag) {
+                tag = await Tag.create({ name: tagName });
+            }
+            return tag;
+        }));
+
+        // Update post's tags
+        await post.setTags(tagInstances);
+
+        return res.status(200).json({ message: "Post tags updated successfully", post, tags: tagInstances });
+    } catch (error) {
+        return res.status(500).json({ message: "Server error", error: error.message });
+    }
+};
+
+export const deletePostTags = async (req, res) => {
+    try {
+        const postId = req.params.id;
+        const { tags } = req.body;
+
+        const tagList = Array.isArray(tags) ? tags : tags.split(',').map(tag => tag.trim());
+
+        const post = await Post.findByPk(postId, { include: 'tags' });
+        if (!post) return res.status(404).json({ message: "Post not found" });
+
+        const tagInstances = await Promise.all(tagList.map(async (tagName) => {
+            return await Tag.findOne({ where: { name: tagName } });
+        }));
+
+        // Remove tags from post
+        await post.removeTags(tagInstances);
+
+        return res.status(200).json({ message: "Post tags removed successfully", post });
+    } catch (error) {
+        return res.status(500).json({ message: "Server error", error: error.message });
+    }
+};
+
